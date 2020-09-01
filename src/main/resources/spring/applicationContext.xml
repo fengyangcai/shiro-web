@@ -1,0 +1,46 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+	    
+	    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+	    <property name="securityManager" ref="securityManager"></property>
+	    
+	    <!-- 修改shiro认证不通过时，跳转的登录页面 -->
+	    <property name="loginUrl" value="/admin_login.jsp"/>
+	    
+	    <!-- 必须配置授权失败跳转的页面 -->
+		<property name="unauthorizedUrl" value="/noauth.jsp"></property>
+	    
+		<!-- Shiro过滤器规则：让shiro拦截哪些页面，怎么拦截
+		perms括号的权限码不要带引号的，带上会导致匹配不上导致授权失败
+		 -->
+		<property name="filterChainDefinitions">
+			<value>
+				/user/login=anon
+				/user/edit.jsp= perms[edit:add]
+				/user/test.jsp= perms[test:update]
+				/user/btn.jsp=perms[btn:add]
+				/user/btn.jsp=perms[user_add_btn]
+				/user/*= authc
+				/index.jsp= authc
+			</value>
+		</property>
+	    
+	    
+	    </bean>
+	    
+	    <!-- 创建SecurityManager -->
+	    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+	    <!-- 关联realm -->
+	    <property name="realm" ref="loginRealm"></property>
+	    
+	    </bean>
+	    <!-- 创建Realm -->
+	    <bean id="loginRealm" class="com.fengyangcai.shiro.realm.LoginRealm"></bean>
+	    
+	   
+</beans>
